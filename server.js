@@ -3,16 +3,64 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const { User } = require("./db"); // Импортируем модель пользователя
-
+const setupSwagger = require("./swagger");
 const app = express();
 app.use(bodyParser.json());
+
+setupSwagger(app);
 
 // Конфигурация
 const PORT = 8080;
 const SECRET_KEY = "your_secret_key"; // Замените на более надежный ключ
 
-// Регистрация
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - username
+ *         - password
+ *       properties:
+ *         username:
+ *           type: string
+ *           description: The user's username
+ *         password:
+ *           type: string
+ *           description: The user's password
+ *       example:
+ *         username: testuser
+ *         password: password123
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   - name: Auth
+ *     description: Authentication routes
+ */
 app.post("/register", async (req, res) => {
+    /**
+     * @swagger
+     * /register:
+     *   post:
+     *     summary: Register a new user
+     *     tags: [Auth]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             $ref: '#/components/schemas/User'
+     *     responses:
+     *       201:
+     *         description: User registered successfully
+     *       400:
+     *         description: User already exists
+     *       500:
+     *         description: Server error
+     */
     const { username, password } = req.body;
 
     if (!username || !password) {
